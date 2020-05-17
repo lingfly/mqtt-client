@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <link rel="stylesheet" href="/css/chat.css">
+    <script type="text/javascript"  src="/js/jquery-1.4.4.min.js"></script>
+    <script type="text/javascript" th:inline="javascript">
+        var username = [[${username}]];
+        console.log(username)
+        let socket;
+        let allFriend=[];
+        let onlineFriend=[];
+        window.onload=function () {
+            // 修改
+            // 为icon添加事件
+            $(".img1").click(function(){
+                $(".add").show()
+            })
+            $(".img2").click(function(){
+                $(".delete").show()
+            })
+            //进入聊天页面就打开socket通道
+
+            var target="ws://localhost:9090/chatSocket?username="+username;
+
+            if ('WebSocket' in window){
+                socket = new WebSocket(target);
+            }
+            else if ('MozWebSocket' in window){
+                socket=new MozWebSocket(target);
+            }
+            else {
+                alert("浏览器不支持WebSocket");
+                return;
+            }
+
+
+            socket.onerror = err => {
+                console.log(err);
+            };
+            socket.onopen = event => {
+
+                console.log(event);
+            };
+            socket.onmessage = event => {
+                console.log(event);
+                var result;
+                eval("result="+event.data);
+                console.log(result)
+                if(result.alert!=undefined){
+                    $("#content").append(result.alert+"<br/>");
+                }
+                //刷新好友列表
+                if(result.allFriend!=undefined || result.friends!=undefined){
+                    if (result.allFriend!=undefined){
+                        allFriend = result.allFriend;
+                    }
+                    if (result.friends!=undefined){
+                        onlineFriend = result.friends;
+                    }
+                    $("#userList").html("");
+
+                    //修改
+                    //添加span
+                    $(allFriend).each(function(){
+                        if (onlineFriend.indexOf(this.valueOf())!==-1){
+                            $("#userList").append("<div class='friend_div'><input class='friend' type='checkbox' value='"+this+"' >"+ "<span class='span1'>" + this + "</span>" + "<span class='span2'><在线></span></div>");
+                        }
+                        else {
+                            $("#userList").append("<div class='friend_div'><input class='friend' type='checkbox' value='"+this+"' >"+ "<span class='span1'>" + this + "</span>" + "<span class='span2'><离线></span></div>");
+                        }
+                    });
+                }
+                //刷新消息列表
+                if(result.fromUser!=undefined){
+                    if(username == result.fromUser){
+                        $("#content").append("<div class='text right'>" + result.fromUser+" "+result.date+
+                            " ：<br/>"+"<span class='right_span'>"+result.sendMsg+"</span>"+"</div>");
+                    } else {
+                        $("#content").append("<div class='text left'>" + result.fromUser+" "+result.date+
+                            " ：<br/>"+result.sendMsg+"</div>");
+                    }
+                }
+                //添加好友的响应
+
+                if(result.friend!=undefined){
+                    console.log("result.friend")
+                    if (result.friend==="success"){
+                        alert("添加好友成功")
+                    }
+                    else if (result.friend==="finished"){
+                        alert("你和对方已经是好友了")
+                    }
+                    else if (result.friend==="delsuccess"){
+                        alert("删除好友成功")
+                    }
+                    else if (result.friend==="delfinished"){
+                        alert("该好友不存在")
+                    }
+                    else {
+                        alert("处理失败")
+                    }
+                }
+            };
+
+            socket.onclose = () => {
+
+                console.log("连接关闭");
+            };
+        }
+
+        function  send(){
+            var value= $("#msg").val();
+            var obj;
+            var ss = $("#userList :checked");
+            console.log(ss.val());
+            if (ss.size()==0){
+                    obj={
+                    msg: value,
+                    type: 1//1广播，2单聊
+                }
+            }
+            else {
+                var to=ss.val();
+                obj={
+                    fromUser: username,
+                    toUser: to,
+                    msg: value,
+                    type: 2//1广播，2单聊
+                }
+            }
+            var str=JSON.stringify(obj);
+            socket.send(str);
+            document.getElementById("msg").value="";
+        }
+        function add_friend(dest){
+            var obj={
+                type: 3,
+                friend: dest,
+            }
+            var str = JSON.stringify(obj);
+            socket.send(str);
+            $(".add").hide()
+        }
+        function delete_friend(dest){
+            var obj={
+                type: 4,
+                friend: dest,
+            }
+            var str = JSON.stringify(obj);
+            socket.send(str);
+            $(".delete").hide()
+        }
+
+        function return1(target) {
+            target.hide()
+        }
+
+    </script>
+</head>
+<body>
+<div class="chat">
+    <div class="header" th:text="${username}"></div>
+    <div  id="content"></div>
+    <div  id="userList"></div>
+    <div  id="input">
+        <div class="icon">
+            <div class="add_delete">
+                <img src="images/add-pluss-1.png" alt="" class="img1">
+                <img src="images/error-1.png" alt="" class="img2">
+            </div>
+        </div>
+        <textarea  id="msg"></textarea>
+        <button class="btn1" onclick="send()">发送</button>
+    </div>
+    <div class="add">
+        <input id="add-friend">
+        <button onclick="add_friend($('#add-friend').val())">添加好友</button>
+        <button onclick="return1($('.add'))">返回</button>
+    </div>
+    <div class="delete">
+        <input id="delete-friend">
+        <button onclick="delete_friend($('#delete-friend').val())">删除好友</button>
+        <button onclick="return1($('.delete'))">返回</button>
+    </div>
+<!--    <div>
+        <input id="add-friend">
+        <button onclick="add_friend($('#add-friend').val())">添加好友</button>
+    </div>
+    <div>
+        <input id="delete-friend">
+        <button onclick="delete_friend($('#delete-friend').val())">删除好友</button>
+    </div>-->
+</div>
+</body>
+</html>

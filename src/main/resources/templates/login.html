@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <link rel="stylesheet" href="/css/login.css">
+    <script type="text/javascript"  src="/js/jquery-1.4.4.min.js"></script>
+    <script type="text/javascript" th:inline="javascript">
+        var return_code = [[${return_code}]];
+
+        window.onload = function(){
+            $(".qq_login").click(function(){
+                $(".form").show()
+            })
+            if (return_code === 0){
+                alert("密码不能为空")
+            }
+            else if (return_code === 1){
+                alert("密码错误")
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="login">
+        <div class="header">
+            <img src="/images/logo.png" alt="" class="img1">
+        </div>
+        <div class="content">
+            <form action="/login" method="post" class="form">
+                <div class="form_login">
+                    name:&nbsp&nbsp<input name="username" class="name"><br>
+                    password:&nbsp&nbsp<input type="password" name="password" class="password">
+                    <input type="submit" class="button" value="登陆">
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

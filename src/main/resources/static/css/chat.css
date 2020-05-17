@@ -1,0 +1,151 @@
+body,li,ul{
+    margin: 0px;
+    padding: 0px;
+}
+
+.chat {
+    width: 668px;
+    height: 483px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    background-color: white;
+    border: 1px solid lightgray;
+}
+
+.header {
+    text-align: center;
+    width: 100%;
+    height: 10%;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    background-color: skyblue;
+    line-height: 43px;
+    border-bottom: 1px solid lightgray;
+}
+
+#userList {
+    width: 162px;
+    height: 90%;
+    float: right;
+    border-left: 1px solid lightgray;
+}
+
+#content {
+    width: 505px;
+    height: 300px;
+    float: left;
+    border-bottom: 1px solid lightgray;
+    overflow: auto;
+}
+
+#input {
+    float: left;
+    position: relative;
+}
+
+#msg {
+    width: 500px;
+    height: 127px;
+    resize: none;
+    border: none;
+    padding-left: 11px;
+    outline: none;
+    box-sizing: border-box;
+    padding-top: 30px;
+    font-size: 15px;
+}
+
+.btn1 {
+    width: 67px;
+    height: 25px;
+    color: white;
+    position: absolute;
+    right: 14px;
+    bottom: 11px;
+    background-color: skyblue;
+    border: none;
+}
+
+.btn1:hover {
+    background-color: #00bfff;
+}
+
+.icon {
+    position: absolute;
+    width: 101%;
+    background-color: white;
+    height: 19%;
+}
+
+.add_delete {
+    float: right;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    opacity: 0.5;
+}
+
+.img1 {
+    height: 64%;
+    padding-right: 10px;
+}
+
+.img2 {
+    height: 60%;
+    padding-right: 10px
+}
+
+.add {
+    display: none;
+    position: absolute;
+    top: 0px;
+    background-color: white;
+    width: 100%;
+    height: 100%;
+}
+
+.delete {
+    display: none;
+    position: absolute;
+    top: 0px;
+    background-color: white;
+    width: 100%;
+    height: 100%;
+}
+
+.friend_div {
+    width: 100%;
+    height: 2rem;
+    position: relative;
+    margin-bottom: 1.25rem;
+}
+
+.friend_div span {
+    font-size: 0.8rem;
+}
+
+.span2 {
+    position: absolute;
+    bottom: -0.4rem;
+    right: 0px;
+}
+
+.text {
+    width: 100%;
+    height: 3rem;
+    padding-bottom: 0.5rem;
+}
+
+.right {
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.right_span {
+    padding-right: 1rem;
+}
